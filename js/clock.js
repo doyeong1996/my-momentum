@@ -1,4 +1,4 @@
-// 실시간 시계 셋팅  - .padStart(2,"0") 적용
+// 실시간 시계 셋팅  -  .padStart(2,"0") 적용
 
 const clock = document.querySelector("h2#clock");
 

@@ -18,6 +18,7 @@ function greetingPlus(username) {
   greeting.innerText = `Hello ${username}`;
   greeting.classList.remove(HIDDN_CLASSNAME);
 }
+
 const savedUsername = localStorage.getItem("username");
 
 if (savedUsername === null) {
