@@ -5,7 +5,7 @@ const todoForm = document.querySelector("#todo-form");
 const todoInput = todoForm.querySelector("input");
 const todoList = document.querySelector("#todo-list");
 
-const toDos = []; //localStorage에 저장할 배열을 변수로저장
+let toDos = []; //localStorage에 저장할 배열을 변수로저장
 
 const TODOS_KEY = "todos";
 function saveTodos() {
@@ -18,12 +18,15 @@ function todoDelete(event) {
   // 클릭했을때 li를 삭제할수있게 만드는 함수
   const li = event.target.parentElement; // 클릭한정보를 event로 받고 클릭해서 해당된 버튼을 찾는 변수
   li.remove(); // li삭제
+  toDos = toDos.filter((toDo) => toDo.id !== parseInt(li.id));
+  saveTodos();
 }
-function todoListPlus(newTodo) {
+function paintToDo(newTodo) {
   // HTML에 li 와 span을 JS로 추가하는 함수
   const li = document.createElement("li");
+  li.id = newTodo.id;
   const span = document.createElement("span");
-  span.innerText = newTodo; // span에 innerText를 newTodo값으로 텍스트표시
+  span.innerText = newTodo.text; // span에 innerText를 newTodo값으로 텍스트표시
   const button = document.createElement("button");
   button.innerText = "delete";
   button.addEventListener("click", todoDelete); // 클릭했을시 todoDelete 함수실행
@@ -32,20 +35,26 @@ function todoListPlus(newTodo) {
   todoList.appendChild(li); // ul todoList에 li 넣기
 }
 
-function todoInputSubmit(event) {
+function handleToDoSubmit(event) {
   // form submit
   event.preventDefault(); // form의 기능 초기화
   const newTodo = todoInput.value; // 입력값을 저장
   todoInput.value = ""; // 새롭게 다시 입력값을 받을수있게 todoInput.value를 빈칸으로 만들기
-  toDos.push(newTodo); // todos 배열에 newTodo 값을 저장 한다.
-  todoListPlus(newTodo); // todoListPlus 함수 실행
+  const newTodoObj = {
+    // newTodo를 오브젝트로 만들기
+    text: newTodo,
+    id: Date.now(),
+  };
+  toDos.push(newTodoObj); // todos 배열에 newTodo 값을 저장 한다.
+  paintToDo(newTodoObj); // todoListPlus 함수 실행
   saveTodos();
 }
-todoForm.addEventListener("submit", todoInputSubmit);
+todoForm.addEventListener("submit", handleToDoSubmit);
 
 const savedToDos = localStorage.getItem(TODOS_KEY);
 
 if (savedToDos !== null) {
-  const parsadToDos = JSON.parse(savedToDos);
-  parsadToDos.forEach((item) => console.log("this is ", item));
+  const parsdToDos = JSON.parse(savedToDos);
+  toDos = parsdToDos;
+  parsdToDos.forEach(paintToDo); //새로고침을해도 todolist를 보여줌
 }
